@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- Provided by sleutene for convenience -->
+<launch>
+  <!-- Launch simulator. -->
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find sjtu_drone)/launch/simple.launch">
+    <arg name="world_name" value="$(find sjtu_drone)/worlds/skokloster_castle.world"/>
+  </include>
+
+  <!-- IPv4 address of your drone -->
+  <arg name="ip" default="192.168.1.1" />
+  <!-- Ultrasound frequency (7 or 8). -->
+  <arg name="freq" default="8" />
+
+  <!-- Launch estimator / control arp_node. -->
+  <node name="arp_node" pkg="ardrone_practicals" type="arp_node"
+      output="screen">
+    <remap from="ardrone/front/image_raw" to="drone/front_camera/image_raw"/>
+    <remap from="ardrone/imu" to="drone/imu"/> 
+    <remap from="ardrone/takeoff" to="drone/takeoff"/> 
+    <remap from="ardrone/reset" to="drone/reset"/> 
+    <remap from="ardrone/land" to="drone/land"/> 
+    <remap from="ardrone/navdata" to="drone/navdata"/> 
+    <!-- Camera parameters-->
+    <param name="fu" value="185.6909" />
+    <param name="fv" value="185.6909" />
+    <param name="cu" value="319.5" />
+    <param name="cv" value="179." />
+    <param name="k1" value="0" />
+    <param name="k2" value="0" />
+    <param name="p1" value="0" />
+    <param name="p2" value="0" />
+    <rosparam param="T_SC">[0.0, 0.0, 1.0, 0.2, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]</rosparam>
+  </node>
+
+</launch>
