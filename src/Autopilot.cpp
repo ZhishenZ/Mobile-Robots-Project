@@ -17,20 +17,24 @@ Autopilot::Autopilot(ros::NodeHandle& nh)
                              this);
 
   // commands
+  
   pubReset_ = nh_->advertise<std_msgs::Empty>("/ardrone/reset", 1);
   pubTakeoff_ = nh_->advertise<std_msgs::Empty>("/ardrone/takeoff", 1);
   pubLand_ = nh_->advertise<std_msgs::Empty>("/ardrone/land", 1);
-  pubNav_ = nh_->advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 
+  pubMove_ = nh_->advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+  // ros::Rate rate(1);
   // flattrim service
   srvFlattrim_ = nh_->serviceClient<std_srvs::Empty>(
       nh_->resolveName("ardrone/flattrim"), 1);
+  
 }
 
 void Autopilot::navdataCallback(const ardrone_autonomy::NavdataConstPtr& msg)
 {
   std::lock_guard<std::mutex> l(navdataMutex_);
   lastNavdata_ = *msg;
+  
 }
 
 // Get the drone status.
@@ -97,28 +101,27 @@ bool Autopilot::estopReset()
 bool Autopilot::manualMove(double forward, double left, double up,
                            double rotateLeft)
 {
-  return move(forward, left, up, rotateLeft);
+  DroneStatus status = droneStatus();
+  if(status == DroneStatus::Flying || status == DroneStatus::Flying2
+     || status == DroneStatus::Hovering)//state 3,4 or 7
+  {
+    return move(forward, left, up, rotateLeft);
+  }
+  return false;
 }
 
 // Move the drone.
-bool Autopilot::move(double forward, double left, double up, double rotateLeft)
+bool Autopilot::move(double forward, double left, double up,
+                     double rotateLeft)
 {
   // TODO: implement...
-  DroneStatus status = droneStatus();
-  if(status == DroneStatus::Flying || status == DroneStatus::Hovering||status == DroneStatus::Flying2)
-  {geometry_msgs::Twist navMsg;
+  geometry_msgs::Twist navMsg;
   navMsg.linear.x = forward;
   navMsg.linear.y = left;
   navMsg.linear.z = up;
   navMsg.angular.z = rotateLeft;
-  //std::cout<<navMsg.linear.x<<" "<<navMsg.linear.y<<" "<<navMsg.linear.z<<" "<<navMsg.angular.z <<" "<<std::endl;
-  pubNav_.publish(navMsg);
-  //std::cout<<"test_0"<<std::endl;
+  pubMove_.publish(navMsg);
   return true;
-  }
-  //std::cout<<"test_1"<<std::endl;
-  return false;
 }
 
 }  // namespace arp
-
