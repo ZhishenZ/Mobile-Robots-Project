@@ -90,10 +90,30 @@ int main(int argc, char **argv)
     if (event.type == SDL_QUIT) {
       break;
     }
-
+  
     // render image, if there is a new one available
     if(subscriber.getLastImage(image)) {
-
+        cv::putText(image, //target image
+              "forward: up arrow; backward: down arrow; left: left arrow; right: right arrow", //text
+              cv::Point(10, 10), //top-left position
+              cv::FONT_HERSHEY_DUPLEX,
+              0.5,
+              CV_RGB(118, 185, 0), //font color
+              0.5);
+      cv::putText(image, //target image
+              "up: w; down: s; rotateleft: a; rotateright: d", //text
+              cv::Point(10, 30), //top-left position
+              cv::FONT_HERSHEY_DUPLEX,
+              0.5,
+              CV_RGB(118, 185, 0), //font color
+              0.5);
+      cv::putText(image, //target image
+              "takeoff: t; land: l; shutting off: esc; calibration: c", //text
+              cv::Point(10, 50), //top-left position
+              cv::FONT_HERSHEY_DUPLEX,
+              0.5,
+              CV_RGB(118, 185, 0), //font color
+              0.5);
       // TODO: add overlays to the cv::Mat image, e.g. text
       
       // https://stackoverflow.com/questions/22702630/converting-cvmat-to-sdl-texture
@@ -108,14 +128,16 @@ int main(int argc, char **argv)
       SDL_RenderPresent(renderer);
       // cleanup (only after you're done displaying. you can repeatedly call UpdateTexture without destroying it)
       SDL_DestroyTexture(texture);
-    }
 
+    }
     //Multiple Key Capture Begins
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     // check states!
     auto droneStatus = autopilot.droneStatus();
-    // command SDL_SCANCODE_UP //SDL_SCANCODE_DOWN //SDL_SCANCODE_AC_BACK //SDL_SCANCODE_RIGHT
+
+    // command
+
     if (state[SDL_SCANCODE_ESCAPE]) {
       std::cout << "ESTOP PRESSED, SHUTTING OFF ALL MOTORS status=" << droneStatus;
       bool success = autopilot.estopReset();
@@ -153,55 +175,147 @@ int main(int argc, char **argv)
         std::cout << " [FAIL]" << std::endl;
       }
     }
-      //////////////////77
-      /////////////////77
-      ///////////////////
-    //code for moving upwards^
-    if (state[SDL_SCANCODE_UP]) {
-      std::cout << "Flying forwards...                       status=" << droneStatus;
-      bool success = autopilot.manualMove(0.5,0,0,0);
+
+    // TODO: process moving commands when in state 3,4, or 7
+    // if (state[SDL_SCANCODE_UP]) {
+    //   std::cout << "Moving forward...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0.5, 0, 0, 0);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_DOWN]) {
+    //   std::cout << "Moving backward...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(-0.5, 0, 0, 0);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_LEFT]) {
+    //   std::cout << "Moving left...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0, 0.5, 0, 0);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_RIGHT]) {
+    //   std::cout << "Moving right...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0, -0.5, 0, 0);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_W]) {
+    //   std::cout << "Moving up...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0, 0, 0.5, 0);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_S]) {
+    //   std::cout << "Moving down...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0, 0, -0.5, 0);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_A]) {
+    //   std::cout << "Turning left...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0, 0, 0, 0.5);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+
+    // if (state[SDL_SCANCODE_D]) {
+    //   std::cout << "Turning left...     status=" << droneStatus;
+    //   bool success = autopilot.manualMove(0, 0, 0, -0.5);
+    //   if (success) {
+    //     std::cout << " [ OK ]" << std::endl;
+    //   } else {
+    //     std::cout << " [FAIL]" << std::endl;
+    //   }
+    // }
+    
+    // if (!state[SDL_SCANCODE_A
+    //            || SDL_SCANCODE_D
+    //            || SDL_SCANCODE_S
+    //            || SDL_SCANCODE_W
+    //            || SDL_SCANCODE_UP
+    //            || SDL_SCANCODE_DOWN
+    //            || SDL_SCANCODE_LEFT
+    //            || SDL_SCANCODE_RIGHT]) {
+    //   // ros::Rate rate(10);
+    //   bool success = autopilot.manualMove(0, 0, 0, 0);
+    //   // rate.sleep();
+    // }
+
+    if (state[SDL_SCANCODE_A]
+               || state[SDL_SCANCODE_D]
+               || state[SDL_SCANCODE_S]
+               || state[SDL_SCANCODE_W]
+               || state[SDL_SCANCODE_UP]
+               || state[SDL_SCANCODE_DOWN]
+               || state[SDL_SCANCODE_LEFT]
+               || state[SDL_SCANCODE_RIGHT]) {
+      // ros::Rate rate(10);
+      double forward = 0;
+      double left = 0;
+      double up = 0;
+      double rotateLeft = 0;
+
+      if(state[SDL_SCANCODE_A]){rotateLeft = 0.5;}
+      if(state[SDL_SCANCODE_D]){rotateLeft = -0.5;}
+      if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_D]){rotateLeft = 0;}
+
+      if(state[SDL_SCANCODE_W]){up = 0.5;}
+      if(state[SDL_SCANCODE_S]){up = -0.5;}
+      if(state[SDL_SCANCODE_W] && state[SDL_SCANCODE_S]){up = 0;}
+
+      if(state[SDL_SCANCODE_UP]){forward = 0.5;}
+      if(state[SDL_SCANCODE_DOWN]){forward = -0.5;}
+      if(state[SDL_SCANCODE_UP] && state[SDL_SCANCODE_DOWN]){forward = 0;}
+
+      if(state[SDL_SCANCODE_LEFT]){left = 0.5;}
+      if(state[SDL_SCANCODE_RIGHT]){left = -0.5;}
+      if(state[SDL_SCANCODE_LEFT] && state[SDL_SCANCODE_RIGHT]){left = 0;}
+
+      
+      
+
+      std::cout << "Moving...     status=" << droneStatus;
+      bool success = autopilot.manualMove(forward, left, up, rotateLeft);
       if (success) {
         std::cout << " [ OK ]" << std::endl;
       } else {
         std::cout << " [FAIL]" << std::endl;
       }
+      // rate.sleep();
+    } 
+    else{
+      bool success = autopilot.manualMove(0, 0, 0, 0);
     }
 
-    if (state[SDL_SCANCODE_DOWN]) {
-      std::cout << "Flying backwards...                       status=" << droneStatus;
-      bool success = autopilot.manualMove(-0.5,0,0,0);
-      if (success) {
-        std::cout << " [ OK ]" << std::endl;
-      } else {
-        std::cout << " [FAIL]" << std::endl;
-      }
-    }
-
-
-    if (state[SDL_SCANCODE_W]) {
-      std::cout << "Flying upwards...                       status=" << droneStatus;
-      bool success = autopilot.manualMove(0,0,0.5,0);
-      if (success) {
-        std::cout << " [ OK ]" << std::endl;
-      } else {
-        std::cout << " [FAIL]" << std::endl;
-      }
-    }
-
-    if (state[SDL_SCANCODE_S]) {
-      std::cout << "Flying downwards...                       status=" << droneStatus;
-      bool success = autopilot.manualMove(0,0,-0.5,0);
-      if (success) {
-        std::cout << " [ OK ]" << std::endl;
-      } else {
-        std::cout << " [FAIL]" << std::endl;
-      }
-    }
-
-
-
-
-    // TODO: process moving commands when in state 3 Flying,4 hovering, or 7 Flying2
   }
 
   // make sure to land the drone...
